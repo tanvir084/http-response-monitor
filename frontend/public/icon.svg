@@ -1,0 +1,48 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle with Purple Gradient -->
+  <circle cx="64" cy="64" r="64" fill="url(#purpleGradient)"/>
+  
+  <!-- HTTP Text -->
+  <text x="64" y="50" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="bold" fill="white" text-anchor="middle">HTTP</text>
+  
+  <!-- Activity Wave 1 -->
+  <path d="M 24 76 Q 40 68 56 76 Q 72 84 88 76 Q 96 72 104 76" 
+        stroke="white" 
+        stroke-width="3" 
+        fill="none" 
+        opacity="0.9"
+        stroke-linecap="round"/>
+  
+  <!-- Activity Wave 2 -->
+  <path d="M 32 88 Q 48 80 64 88 Q 80 96 96 88" 
+        stroke="white" 
+        stroke-width="3" 
+        fill="none" 
+        opacity="0.6"
+        stroke-linecap="round"/>
+  
+  <!-- Status Indicator Circle (Green with pulse) -->
+  <circle cx="100" cy="28" r="10" fill="#4ade80"/>
+  
+  <!-- Pulse Animation -->
+  <circle cx="100" cy="28" r="10" fill="#4ade80" opacity="0.4">
+    <animate 
+      attributeName="r" 
+      values="10;14;10" 
+      dur="2s" 
+      repeatCount="indefinite"/>
+    <animate 
+      attributeName="opacity" 
+      values="0.4;0;0.4" 
+      dur="2s" 
+      repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Gradient Definition -->
+  <defs>
+    <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

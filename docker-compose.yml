@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:6
+    container_name: http-monitor-mongodb
+    restart: unless-stopped
+    ports:
+      - '27018:27017'
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: http-monitor
+    networks:
+      - http-monitor-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/http-monitor --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: http-monitor-backend
+    restart: unless-stopped
+    ports:
+      - '3001:3001'
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      API_URL: http://localhost:3001
+      MONGODB_URI: mongodb://mongodb:27017/http-monitor
+      FRONTEND_URL: http://localhost:3000
+      MONITOR_TARGET_URL: https://httpbin.org/anything
+      LOG_LEVEL: debug
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - http-monitor-network
+    healthcheck:
+      test: ['CMD', 'node', '-e', "require('http').get('http://localhost:3001/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:3001
+    container_name: http-monitor-frontend
+    restart: unless-stopped
+    ports:
+      - '3000:80'
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - http-monitor-network
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  http-monitor-network:
+    driver: bridge
